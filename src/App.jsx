@@ -1,9 +1,12 @@
 import "./App.css";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import InputForm from "./components/InputForm";
 import FlashcardDeck from "./components/FlashcardDeck";
 import Quiz from "./components/Quiz";
 import { validateResponse } from "./utils/validateResponse";
+
+const SESSION_KEY = "studyAssistant.session";
+const THEME_KEY = "studyAssistant.theme";
 
 function App() {
   const [status, setStatus] = useState("idle"); // idle | loading | error | success
@@ -17,6 +20,69 @@ function App() {
   const [answers, setAnswers] = useState({});
   const [submitted, setSubmitted] = useState(false);
   const [round, setRound] = useState(0);
+
+  // Theme state, defaults to system preference if nothing saved yet
+  const [theme, setTheme] = useState(() => {
+    try {
+      const saved = localStorage.getItem(THEME_KEY);
+      if (saved === "light" || saved === "dark") return saved;
+    } catch {
+      // localStorage unavailable, fall through to system preference
+    }
+    return window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches
+      ? "dark"
+      : "light";
+  });
+
+  // Restore a saved session on first mount
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem(SESSION_KEY);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed?.data) {
+          setData(parsed.data);
+          setStatus("success");
+          if (parsed.data.type === "quiz") {
+            setActiveQuestions(parsed.activeQuestions ?? parsed.data.questions);
+            setAnswers(parsed.answers ?? {});
+            setSubmitted(parsed.submitted ?? false);
+            setRound(parsed.round ?? 0);
+          }
+        }
+      }
+    } catch {
+      // Corrupt or missing saved session — just start fresh
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Persist session whenever the relevant state changes
+  useEffect(() => {
+    if (status !== "success" || !data) return;
+    try {
+      localStorage.setItem(
+        SESSION_KEY,
+        JSON.stringify({ data, activeQuestions, answers, submitted, round })
+      );
+    } catch {
+      // Storage full or unavailable — non-fatal, just skip persistence
+    }
+  }, [status, data, activeQuestions, answers, submitted, round]);
+
+  // Apply + persist theme
+  useEffect(() => {
+    document.documentElement.setAttribute("data-theme", theme);
+    try {
+      localStorage.setItem(THEME_KEY, theme);
+    } catch {
+      // non-fatal
+    }
+  }, [theme]);
+
+  const toggleTheme = () => {
+    setTheme((t) => (t === "dark" ? "light" : "dark"));
+  };
 
   const handleGenerate = async (input, mode) => {
     lastRequestRef.current = [input, mode];
@@ -48,7 +114,6 @@ function App() {
       }
 
       const json = await res.json();
-      console.log("Raw response from backend:", json);
 
       if (abortControllerRef.current !== controller) return;
 
@@ -90,12 +155,43 @@ function App() {
     setRound((r) => r + 1);
   };
 
+  const handleNewSession = () => {
+    try {
+      localStorage.removeItem(SESSION_KEY);
+    } catch {
+      // non-fatal
+    }
+    setData(null);
+    setStatus("idle");
+    setActiveQuestions(null);
+    setAnswers({});
+    setSubmitted(false);
+    setRound(0);
+  };
+
   return (
     <div className="app">
-      <h1>Study Assistant</h1>
+      <div className="app-header">
+        <h1>Study Assistant</h1>
+        <button className="theme-toggle" onClick={toggleTheme}>
+          {theme === "dark" ? "☀️ Light" : "🌙 Dark"}
+        </button>
+      </div>
+
+      {status === "success" && data && (
+        <div className="session-controls">
+          <button onClick={handleNewSession}>Start new session</button>
+        </div>
+      )}
+
       <InputForm onSubmit={handleGenerate} loading={status === "loading"} />
 
-      {status === "loading" && <p>Generating your study material...</p>}
+      {status === "loading" && (
+        <div className="loading">
+          <div className="spinner" />
+          <p>Generating your study material...</p>
+        </div>
+      )}
 
       {status === "error" && (
         <div className="error-box">
