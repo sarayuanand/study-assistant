@@ -14,7 +14,7 @@ You are a study content generator.
 
 Generate study material based on the user's topic or notes.
 
-The user will request either "quiz" or "flashcards".
+The user will request either "quiz" or "flashcards", and will tell you a target count of items to generate based on how much content they provided. Generate approximately that many cards or questions — one per distinct concept, fact, or idea in the content. Do not default to a fixed small number regardless of input length.
 
 For flashcards, return exactly this shape:
 
@@ -52,7 +52,7 @@ For quizzes, return exactly this shape:
 }
 
 Rules:
-- Generate 5-8 cards or questions.
+- Generate between 5 and 20 cards or questions, based on the target count given.
 - Each id must be unique.
 - Flashcard ids should be c1, c2, c3, etc.
 - Quiz ids should be q1, q2, q3, etc.
@@ -65,15 +65,11 @@ Rules:
 `;
 
 function validateStudyContent(data) {
-
   if (data.type !== "quiz" && data.type !== "flashcards") {
-  return false;
-}
+    return false;
+  }
 
-  if (
-    typeof data.topic !== "string" ||
-    !data.topic.trim()
-  ) {
+  if (typeof data.topic !== "string" || !data.topic.trim()) {
     return false;
   }
 
@@ -81,7 +77,7 @@ function validateStudyContent(data) {
     if (
       !Array.isArray(data.cards) ||
       data.cards.length < 5 ||
-      data.cards.length > 8
+      data.cards.length > 20
     ) {
       return false;
     }
@@ -102,7 +98,7 @@ function validateStudyContent(data) {
     if (
       !Array.isArray(data.questions) ||
       data.questions.length < 5 ||
-      data.questions.length > 8
+      data.questions.length > 20
     ) {
       return false;
     }
@@ -116,9 +112,7 @@ function validateStudyContent(data) {
         Array.isArray(question.options) &&
         question.options.length === 4 &&
         question.options.every(
-          (option) =>
-            typeof option === "string" &&
-            option.trim()
+          (option) => typeof option === "string" && option.trim()
         ) &&
         Number.isInteger(question.correctIndex) &&
         question.correctIndex >= 0 &&
@@ -143,10 +137,14 @@ app.post("/api/generate", async (req, res) => {
   }
 
   // Only allow the two supported modes
-  const selectedMode =
-    mode === "flashcards" || mode === "quiz"
-      ? mode
-      : "quiz";
+  const selectedMode = mode === "flashcards" || mode === "quiz" ? mode : "quiz";
+
+  // Scale target item count based on input length
+  const wordCount = input.trim().split(/\s+/).length;
+  const targetCount =
+    wordCount > 300 ? 20 :
+    wordCount > 150 ? 15 :
+    wordCount > 60 ? 10 : 6;
 
   try {
     // Create a timeout controller
@@ -177,6 +175,7 @@ app.post("/api/generate", async (req, res) => {
             {
               role: "user",
               content: `Mode: ${selectedMode}
+Target count: approximately ${targetCount} items
 
 Content:
 ${input}`,
@@ -198,14 +197,11 @@ ${input}`,
 
     // Handle Groq errors
     if (!groqResponse.ok) {
-      console.error(
-        "Groq API error:",
-        groqResponse.status
-      );
+      const errBody = await groqResponse.text();
+      console.error("Groq API error:", groqResponse.status, errBody);
 
       return res.status(502).json({
-        error:
-          "AI provider returned an error. Please try again.",
+        error: "AI provider returned an error. Please try again.",
       });
     }
 
@@ -217,8 +213,7 @@ ${input}`,
     // Handle empty responses
     if (!content || !content.trim()) {
       return res.status(502).json({
-        error:
-          "AI provider returned an empty response.",
+        error: "AI provider returned an empty response.",
       });
     }
 
@@ -228,20 +223,20 @@ ${input}`,
     try {
       parsedContent = JSON.parse(content);
     } catch (error) {
-      console.error(
-        "Invalid JSON returned by AI:",
-        content
-      );
+      console.error("Invalid JSON returned by AI:", content);
 
       return res.status(502).json({
         error: "AI returned invalid JSON.",
       });
     }
+
     if (!validateStudyContent(parsedContent)) {
-  return res.status(502).json({
-    error: "AI returned invalid study content.",
-  });
-}
+      console.error("AI returned invalid study content:", parsedContent);
+
+      return res.status(502).json({
+        error: "AI returned invalid study content.",
+      });
+    }
 
     // Return the parsed JSON object to the frontend
     res.json(parsedContent);
@@ -249,16 +244,14 @@ ${input}`,
     // Handle timeout
     if (error.name === "AbortError") {
       return res.status(504).json({
-        error:
-          "The AI took too long to respond. Please try again.",
+        error: "The AI took too long to respond. Please try again.",
       });
     }
 
     console.error("Server error:", error);
 
     res.status(500).json({
-      error:
-        "Internal server error. Please try again.",
+      error: "Internal server error. Please try again.",
     });
   }
 });
@@ -266,7 +259,5 @@ ${input}`,
 const PORT = 3001;
 
 app.listen(PORT, () => {
-  console.log(
-    `Backend listening on http://localhost:${PORT}`
-  );
+  console.log(`Backend listening on http://localhost:${PORT}`);
 });

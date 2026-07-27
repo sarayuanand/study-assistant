@@ -1,0 +1,346 @@
+/* ---------- Global / App container ---------- */
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+}
+
+.app {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 1.5rem 1rem;
+}
+
+@media (min-width: 900px) {
+  .app {
+    max-width: 700px;
+  }
+}
+
+.app h1 {
+  font-size: 1.5rem;
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.error-box {
+  max-width: 500px;
+  margin: 1.5rem auto;
+  padding: 1rem;
+  border-radius: 8px;
+  background: #ffebee;
+  border: 1px solid #c62828;
+  text-align: center;
+}
+
+.error-box button {
+  min-height: 44px;
+  min-width: 100px;
+  padding: 0.6rem 1.2rem;
+  margin-top: 0.75rem;
+  font-size: 1rem;
+  border-radius: 8px;
+  border: none;
+  background: #c62828;
+  color: white;
+  cursor: pointer;
+}
+
+/* ---------- Flashcard ---------- */
+
+.flashcard-wrapper {
+  perspective: 1000px;
+  max-width: 500px;
+  width: 100%;
+  margin: 2rem auto;
+  text-align: center;
+  padding: 0 1rem;
+}
+
+.flashcard {
+  position: relative;
+  width: 100%;
+  min-height: 200px;
+  cursor: pointer;
+  transform-style: preserve-3d;
+  transition: transform 0.5s;
+}
+
+.flashcard.flipped {
+  transform: rotateY(180deg);
+}
+
+.flashcard-face {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: stretch;
+  text-align: center;
+  padding: 1.5rem;
+  border-radius: 12px;
+  backface-visibility: hidden;
+  font-size: 1.1rem;
+  line-height: 1.4;
+  min-height: 200px;
+  max-height: 350px;
+  overflow-y: auto;
+  overflow-wrap: break-word;
+  word-break: normal;
+}
+
+/* Scale the card up on larger screens instead of leaving it phone-sized */
+@media (min-width: 640px) {
+  .flashcard-wrapper {
+    max-width: 560px;
+  }
+
+  .flashcard {
+    min-height: 300px;
+  }
+
+  .flashcard-face {
+    min-height: 300px;
+    max-height: 450px;
+    font-size: 1.3rem;
+    padding: 2rem;
+  }
+}
+
+@media (min-width: 900px) {
+  .flashcard-wrapper {
+    max-width: 640px;
+  }
+
+  .flashcard {
+    min-height: 340px;
+  }
+
+  .flashcard-face {
+    min-height: 340px;
+    max-height: 500px;
+    font-size: 1.4rem;
+    padding: 2.5rem;
+  }
+}
+
+.face-text {
+  width: 100%;
+}
+
+.flashcard-face.front {
+  background: #f0f0f5;
+}
+
+.flashcard-face.back {
+  background: #d8e4ff;
+  transform: rotateY(180deg);
+}
+
+.progress {
+  font-size: 0.9rem;
+  color: #666;
+  margin-bottom: 0.5rem;
+}
+
+.hint {
+  font-size: 0.85rem;
+  color: #999;
+  margin-top: 0.75rem;
+}
+
+/* ---------- Flashcard deck nav ---------- */
+
+.deck-nav {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1.25rem;
+  flex-wrap: wrap;
+}
+
+.deck-nav button {
+  min-height: 44px;
+  min-width: 100px;
+  padding: 0.6rem 1.2rem;
+  font-size: 1rem;
+  border-radius: 8px;
+  border: none;
+  background: #4a6ee0;
+  color: white;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.deck-nav button:disabled {
+  background: #ccc;
+  cursor: default;
+}
+
+/* ---------- Quiz ---------- */
+
+.quiz {
+  width: 100%;
+  max-width: 600px;
+  margin: 1.5rem auto;
+  padding: 0 0.5rem;
+}
+
+.quiz-question {
+  margin-bottom: 1.75rem;
+}
+
+.question-text {
+  font-size: 1.05rem;
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+  line-height: 1.4;
+  overflow-wrap: break-word;
+}
+
+.options {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.option {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 0.85rem 1rem;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  background: #fff;
+  cursor: pointer;
+  font-size: 1rem;
+  line-height: 1.4;
+  min-height: 44px;
+  transition: all 0.15s ease;
+  overflow-wrap: break-word;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.option:hover:not(:disabled) {
+  border-color: #b8c8f0;
+}
+
+.option.selected {
+  border-color: #4a6ee0;
+  background: #eaf0ff;
+}
+
+.option.correct {
+  border-color: #2e7d32;
+  background: #e8f5e9;
+}
+
+.option.incorrect {
+  border-color: #c62828;
+  background: #ffebee;
+}
+
+.option.reveal-correct {
+  border-color: #2e7d32;
+  background: #e8f5e9;
+  opacity: 0.7;
+}
+
+.option:disabled {
+  cursor: default;
+}
+
+.explanation {
+  margin-top: 0.6rem;
+  padding: 0.75rem;
+  background: #f7f7fa;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  line-height: 1.4;
+  color: #444;
+  overflow-wrap: break-word;
+}
+
+.submit-btn {
+  display: block;
+  width: 100%;
+  min-height: 48px;
+  padding: 0.75rem 1rem;
+  margin-top: 1rem;
+  font-size: 1.05rem;
+  border-radius: 8px;
+  border: none;
+  background: #4a6ee0;
+  color: white;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.submit-btn:disabled {
+  background: #ccc;
+  cursor: default;
+}
+
+.quiz-results {
+  text-align: center;
+  margin-top: 1.5rem;
+  padding: 1rem;
+  background: #f7f7fa;
+  border-radius: 8px;
+}
+
+.quiz-results p {
+  font-size: 1.15rem;
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+}
+
+.quiz-results button {
+  min-height: 44px;
+  padding: 0.6rem 1.2rem;
+  font-size: 1rem;
+  border-radius: 8px;
+  border: none;
+  background: #4a6ee0;
+  color: white;
+  cursor: pointer;
+}
+
+/* ---------- Larger screens: let quiz options sit side by side ---------- */
+
+@media (min-width: 640px) {
+  .options {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  .option {
+    flex: 1 1 calc(50% - 0.6rem);
+  }
+}
+
+/* ---------- Small phones: tighten spacing ---------- */
+
+@media (max-width: 400px) {
+  .app {
+    padding: 1rem 0.75rem;
+  }
+
+  .flashcard-wrapper {
+    padding: 0 0.5rem;
+    margin: 1.25rem auto;
+  }
+
+  .flashcard-face {
+    padding: 1rem;
+    font-size: 1rem;
+  }
+
+  .quiz {
+    padding: 0;
+  }
+}
