@@ -8,419 +8,306 @@
 
 html {
   font-size: 16px;
+  scroll-behavior: smooth;
 }
 
 body {
   margin: 0;
   font-family: Arial, Helvetica, sans-serif;
-  background: linear-gradient(135deg, #eef2ff, #f6f9ff, #fff7ec);
-  color: #222;
+  background: #eef2f7;
+  color:#222;
 }
 
-img {
-  max-width: 100%;
-  display: block;
-}
-
-button,
-textarea,
-input {
-  font: inherit;
-}
+img{max-width:100%;display:block;}
+button,textarea,input{font:inherit}
 
 /* ---------- App ---------- */
 
-.app {
-  width: min(95%, 900px);
-  margin: 30px auto;
-  padding: 30px;
-  background: white;
-  border-radius: 20px;
-  box-shadow: 0 15px 40px rgba(0,0,0,.08);
+.app{
+  width:min(95%,900px);
+  margin:30px auto;
+  padding:30px;
+  background:#fff;
+  border-radius:22px;
+  box-shadow:0 16px 40px rgba(63,21,33,.15);
+  border-top:6px solid #3F1521;
 }
 
-.app h1 {
-  text-align: center;
-  margin-bottom: 30px;
-  font-size: 2.3rem;
-  color: #355CDE;
+.app h1{
+  text-align:center;
+  font-size:2.3rem;
+  color:#3F1521;
+  margin-bottom:30px;
 }
 
-/* ---------- Input Form ---------- */
-
-.input-form {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
+h2{
+  text-align:center;
+  color:#3F1521;
 }
 
-.input-form textarea {
-  width: 100%;
-  resize: vertical;
-  min-height: 170px;
-  padding: 15px;
-  border-radius: 12px;
-  border: 2px solid #d8def8;
-  transition: .25s;
+/* ---------- Loading ---------- */
+
+.loading{
+  text-align:center;
+  margin:30px 0;
 }
 
-.input-form textarea:focus {
-  outline: none;
-  border-color: #5B7FFF;
-  box-shadow: 0 0 12px rgba(91,127,255,.25);
+.spinner{
+  width:46px;
+  height:46px;
+  border:5px solid #d8e2ef;
+  border-top:5px solid #3F1521;
+  border-radius:50%;
+  margin:0 auto 15px;
+  animation:spin .8s linear infinite;
 }
 
-.mode-toggle {
-  display: flex;
-  gap: 20px;
-  flex-wrap: wrap;
+@keyframes spin{
+  to{transform:rotate(360deg);}
 }
 
-.input-form button {
-  padding: 12px;
-  border: none;
-  border-radius: 10px;
-  background: linear-gradient(135deg,#5B7FFF,#355CDE);
-  color: white;
-  cursor: pointer;
-  min-height: 44px;
-  transition: .25s;
+/* ---------- Input ---------- */
+
+.input-form{
+  display:flex;
+  flex-direction:column;
+  gap:15px;
 }
 
-.input-form button:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 18px rgba(53,92,222,.25);
+.input-form textarea{
+  width:100%;
+  min-height:170px;
+  resize:vertical;
+  padding:15px;
+  border-radius:12px;
+  border:2px solid #9DB3D3;
+  transition:.25s;
 }
 
-.input-form button:disabled {
-  background: gray;
-  cursor: default;
+.input-form textarea:focus{
+  outline:none;
+  border-color:#3F1521;
+  box-shadow:0 0 14px rgba(157,179,211,.5);
+}
+
+.mode-toggle{
+  display:flex;
+  gap:20px;
+  flex-wrap:wrap;
+}
+
+button{
+  transition:.2s;
+}
+
+.input-form button,
+.deck-nav button,
+.submit-btn,
+.quiz-results button,
+.error-box button{
+  background:#3F1521;
+  color:white;
+  border:none;
+  border-radius:10px;
+  cursor:pointer;
+  min-height:44px;
+}
+
+button:hover:not(:disabled){
+  background:#5a1f30;
+  transform:translateY(-2px);
+  box-shadow:0 10px 18px rgba(63,21,33,.25);
+}
+
+button:disabled{
+  background:#999;
+  cursor:default;
+  box-shadow:none;
 }
 
 /* ---------- Error ---------- */
 
-.error-box {
-  background: #ffe5e5;
-  border: 1px solid #ff6b6b;
-  padding: 18px;
-  margin-top: 20px;
-  border-radius: 12px;
-  text-align: center;
-}
-
-.error-box button {
-  margin-top: 10px;
-  padding: 10px 20px;
-  border: none;
-  border-radius: 10px;
-  background: linear-gradient(135deg,#ff7b7b,#e63946);
-  color: white;
-  cursor: pointer;
+.error-box{
+  background:#fdecef;
+  border:2px solid #3F1521;
+  border-radius:12px;
+  padding:18px;
+  text-align:center;
+  margin-top:20px;
 }
 
 /* ---------- Flashcards ---------- */
 
-.flashcard-wrapper {
-  perspective: 1000px;
-  max-width: 650px;
-  margin: 30px auto;
-  text-align: center;
+.flashcard-wrapper{
+  perspective:1000px;
+  max-width:650px;
+  margin:30px auto;
+  text-align:center;
 }
 
-.flashcard {
-  position: relative;
-  width: 100%;
-  min-height: 320px;
-  transform-style: preserve-3d;
-  transition: transform .5s;
-  cursor: pointer;
-  border-radius: 15px;
-  box-shadow: 0 15px 30px rgba(0,0,0,.12);
+.flashcard{
+  position:relative;
+  width:100%;
+  min-height:320px;
+  transform-style:preserve-3d;
+  transition:transform .5s;
+  border-radius:18px;
+  box-shadow:0 12px 28px rgba(63,21,33,.15);
 }
 
-.flashcard.flipped {
-  transform: rotateY(180deg);
+.flashcard.flipped{transform:rotateY(180deg);}
+
+.flashcard-face{
+  position:absolute;
+  inset:0;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  padding:30px;
+  border-radius:18px;
+  backface-visibility:hidden;
+  overflow:auto;
+  font-size:1.2rem;
+  line-height:1.5;
 }
 
-.flashcard-face {
-  position: absolute;
-  inset: 0;
-
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-  padding: 30px;
-
-  border-radius: 15px;
-
-  backface-visibility: hidden;
-
-  overflow-y: auto;
-  overflow-wrap: break-word;
-  word-break: break-word;
-
-  font-size: 1.2rem;
-  line-height: 1.5;
+.flashcard-face.front{
+  background:#f4f8fc;
+  border:2px solid #9DB3D3;
+  color:#222;
 }
 
-.flashcard-face.front {
-  background: linear-gradient(135deg,#ffffff,#eef4ff);
+.flashcard-face.back{
+  background:#9DB3D3;
+  border:2px solid #3F1521;
+  color:#3F1521;
+  transform:rotateY(180deg);
 }
 
-.flashcard-face.back {
-  background: linear-gradient(135deg,#8EC5FC,#E0C3FC);
-  color: #222;
-  transform: rotateY(180deg);
-}
-
-.progress {
-  margin-bottom: 10px;
-  color: #666;
-  font-weight: bold;
-}
-
-.hint {
-  margin-top: 15px;
-  color: gray;
-}
+.progress{font-weight:bold;color:#3F1521;}
+.hint{color:#666;}
 
 /* ---------- Deck ---------- */
 
-.deck-nav {
-  margin-top: 20px;
-  display: flex;
-  justify-content: center;
-  gap: 15px;
-  flex-wrap: wrap;
-}
-
-.deck-nav button {
-  min-width: 120px;
-  min-height: 44px;
-  padding: 12px 18px;
-  border: none;
-  border-radius: 10px;
-  color: white;
-  background: linear-gradient(135deg,#5B7FFF,#355CDE);
-  cursor: pointer;
-  transition: .25s;
-}
-
-.deck-nav button:hover:not(:disabled) {
-  transform: translateY(-2px);
-}
-
-.deck-nav button:disabled {
-  background: gray;
+.deck-nav{
+  display:flex;
+  justify-content:center;
+  gap:15px;
+  flex-wrap:wrap;
+  margin-top:20px;
 }
 
 /* ---------- Quiz ---------- */
 
-.quiz {
-  width: 100%;
+.quiz-question{
+  background:#fff;
+  border-radius:16px;
+  padding:20px;
+  margin-bottom:25px;
+  box-shadow:0 8px 18px rgba(63,21,33,.08);
+  border-left:5px solid #9DB3D3;
 }
 
-.quiz-question {
-  background: white;
-  padding: 20px;
-  border-radius: 15px;
-  margin-bottom: 25px;
-  box-shadow: 0 8px 18px rgba(0,0,0,.08);
+.question-text{
+  font-size:1.1rem;
+  font-weight:bold;
+  color:#3F1521;
 }
-
-.question-text {
-  font-weight: bold;
-  margin-bottom: 12px;
-  font-size: 1.1rem;
-}
-
-.options {
-  display: grid;
-  gap: 10px;
-}
-
-.option {
-  width: 100%;
-  text-align: left;
-  padding: 14px;
-  border-radius: 10px;
-  border: 2px solid #ddd;
-  cursor: pointer;
-  transition: .2s;
-  word-break: break-word;
-  background: white;
-}
-
-.option:hover:not(:disabled) {
-  border-color: royalblue;
-}
-
-.option.selected {
-  background: #dce9ff;
-  border-color: royalblue;
-  font-weight: bold;
-}
-
-.option.correct {
-  background: #d8ffd8;
-  border-color: #2e8b57;
-  font-weight: bold;
-}
-
-.option.incorrect {
-  background: #ffe2e2;
-  border-color: #d93025;
-}
-
-.option.reveal-correct {
-  background: #d8ffd8;
-  border-color: #2e8b57;
-  opacity: .8;
-}
-
-.explanation {
-  margin-top: 12px;
-  padding: 15px;
-  border-radius: 10px;
-  background: #f5f7ff;
-  border-left: 5px solid royalblue;
-}
-
-.submit-btn {
-  width: 100%;
-  margin-top: 25px;
-  padding: 14px;
-  min-height: 48px;
-  border: none;
-  border-radius: 10px;
-  background: linear-gradient(135deg,#5B7FFF,#355CDE);
-  color: white;
-  cursor: pointer;
-}
-
-.submit-btn:disabled {
-  background: gray;
-}
-
-.quiz-results {
-  text-align: center;
-  margin-top: 30px;
-  padding: 25px;
-  border-radius: 15px;
-  background: linear-gradient(135deg,#eef4ff,#ffffff);
-  box-shadow: 0 8px 18px rgba(0,0,0,.08);
-}
-
-.quiz-results button {
-  margin-top: 15px;
-  padding: 12px 20px;
-  border: none;
-  border-radius: 10px;
-  background: linear-gradient(135deg,#5B7FFF,#355CDE);
-  color: white;
-  cursor: pointer;
-}
-
-/* ---------- Tablet ---------- */
-
-@media (min-width:768px){
 
 .options{
-grid-template-columns:repeat(2,1fr);
+  display:grid;
+  gap:10px;
 }
 
-.flashcard{
-min-height:360px;
+.option{
+  text-align:left;
+  padding:14px;
+  border-radius:10px;
+  border:2px solid #d5dbe5;
+  background:white;
+  cursor:pointer;
 }
 
-.flashcard-face{
-font-size:1.35rem;
+.option.selected{
+  background:#e6edf7;
+  border-color:#9DB3D3;
 }
 
+.option.correct{
+  background:#dff5e3;
+  border-color:#3d8b57;
 }
 
-/* ---------- Desktop ---------- */
-
-@media (min-width:1100px){
-
-.app{
-width:min(90%,1000px);
+.option.incorrect{
+  background:#fde5e5;
+  border-color:#b33;
 }
 
-.flashcard{
-min-height:420px;
+.option.reveal-correct{
+  background:#dff5e3;
+  border-color:#3d8b57;
+  opacity:.85;
 }
 
-.flashcard-face{
-font-size:1.5rem;
-padding:40px;
+.explanation{
+  margin-top:12px;
+  padding:14px;
+  border-left:5px solid #3F1521;
+  background:#f4f7fb;
+  border-radius:10px;
 }
 
-.quiz{
-max-width:850px;
-margin:auto;
+.submit-btn{
+  width:100%;
+  padding:14px;
+  margin-top:20px;
 }
 
+.quiz-results{
+  text-align:center;
+  margin-top:25px;
+  padding:22px;
+  border-radius:15px;
+  background:#f4f8fc;
+  border:2px solid #9DB3D3;
 }
 
-/* ---------- Phones ---------- */
+/* ---------- Footer ---------- */
 
-@media (max-width:600px){
-
-.app{
-padding:15px;
+footer{
+  margin-top:40px;
+  text-align:center;
+  color:#666;
 }
 
-.app h1{
-font-size:1.8rem;
+/* ---------- Responsive ---------- */
+
+@media(min-width:768px){
+.options{grid-template-columns:repeat(2,1fr);}
+.flashcard{min-height:360px;}
+.flashcard-face{font-size:1.35rem;}
 }
 
-.mode-toggle{
-flex-direction:column;
-gap:10px;
+@media(min-width:1100px){
+.app{width:min(90%,1000px);}
+.flashcard{min-height:420px;}
+.flashcard-face{font-size:1.5rem;padding:40px;}
+.quiz{max-width:850px;margin:auto;}
 }
 
-.flashcard{
-min-height:260px;
+@media(max-width:600px){
+.app{padding:16px;}
+.app h1{font-size:1.8rem;}
+.mode-toggle{flex-direction:column;}
+.flashcard{min-height:260px;}
+.flashcard-face{min-height:260px;font-size:1rem;padding:18px;}
+.deck-nav{flex-direction:column;}
+.deck-nav button{width:100%;}
 }
 
-.flashcard-face{
-min-height:260px;
-font-size:1rem;
-padding:18px;
-}
-
-.deck-nav{
-flex-direction:column;
-align-items:stretch;
-}
-
-.deck-nav button{
-width:100%;
-}
-
-}
-
-/* ---------- Very Small Phones ---------- */
-
-@media (max-width:380px){
-
-html{
-font-size:15px;
-}
-
-.flashcard{
-min-height:220px;
-}
-
-.flashcard-face{
-min-height:220px;
-padding:14px;
-}
-
-.input-form textarea{
-min-height:140px;
-}
-
+@media(max-width:380px){
+html{font-size:15px;}
+.flashcard{min-height:220px;}
+.flashcard-face{min-height:220px;padding:14px;}
+.input-form textarea{min-height:140px;}
 }
