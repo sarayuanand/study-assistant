@@ -64,6 +64,74 @@ Rules:
 - Do not include any text before or after the JSON.
 `;
 
+function validateStudyContent(data) {
+
+  if (data.type !== "quiz" && data.type !== "flashcards") {
+  return false;
+}
+
+  if (
+    typeof data.topic !== "string" ||
+    !data.topic.trim()
+  ) {
+    return false;
+  }
+
+  if (data.type === "flashcards") {
+    if (
+      !Array.isArray(data.cards) ||
+      data.cards.length < 5 ||
+      data.cards.length > 8
+    ) {
+      return false;
+    }
+
+    return data.cards.every((card) => {
+      return (
+        typeof card.id === "string" &&
+        card.id.trim() &&
+        typeof card.front === "string" &&
+        card.front.trim() &&
+        typeof card.back === "string" &&
+        card.back.trim()
+      );
+    });
+  }
+
+  if (data.type === "quiz") {
+    if (
+      !Array.isArray(data.questions) ||
+      data.questions.length < 5 ||
+      data.questions.length > 8
+    ) {
+      return false;
+    }
+
+    return data.questions.every((question) => {
+      return (
+        typeof question.id === "string" &&
+        question.id.trim() &&
+        typeof question.question === "string" &&
+        question.question.trim() &&
+        Array.isArray(question.options) &&
+        question.options.length === 4 &&
+        question.options.every(
+          (option) =>
+            typeof option === "string" &&
+            option.trim()
+        ) &&
+        Number.isInteger(question.correctIndex) &&
+        question.correctIndex >= 0 &&
+        question.correctIndex <= 3 &&
+        typeof question.explanation === "string" &&
+        question.explanation.trim()
+      );
+    });
+  }
+
+  return false;
+}
+
 app.post("/api/generate", async (req, res) => {
   const { input, mode } = req.body;
 
@@ -81,6 +149,13 @@ app.post("/api/generate", async (req, res) => {
       : "quiz";
 
   try {
+    // Create a timeout controller
+    const controller = new AbortController();
+
+    const timeout = setTimeout(() => {
+      controller.abort();
+    }, 20000);
+
     const groqResponse = await fetch(
       "https://api.groq.com/openai/v1/chat/completions",
       {
@@ -112,22 +187,25 @@ ${input}`,
             type: "json_object",
           },
         }),
+
+        // Abort the request if it takes longer than 20 seconds
+        signal: controller.signal,
       }
     );
 
+    // Clear the timeout if the request finishes normally
+    clearTimeout(timeout);
+
     // Handle Groq errors
     if (!groqResponse.ok) {
-      const errText = await groqResponse.text();
-
       console.error(
         "Groq API error:",
-        groqResponse.status,
-        errText
+        groqResponse.status
       );
 
       return res.status(502).json({
-        error: "AI provider error",
-        status: groqResponse.status,
+        error:
+          "AI provider returned an error. Please try again.",
       });
     }
 
@@ -136,9 +214,11 @@ ${input}`,
     // Get the model's response text
     const content = data.choices?.[0]?.message?.content;
 
-    if (!content) {
+    // Handle empty responses
+    if (!content || !content.trim()) {
       return res.status(502).json({
-        error: "Empty response from AI provider",
+        error:
+          "AI provider returned an empty response.",
       });
     }
 
@@ -148,20 +228,37 @@ ${input}`,
     try {
       parsedContent = JSON.parse(content);
     } catch (error) {
-      console.error("Invalid JSON returned by AI:", content);
+      console.error(
+        "Invalid JSON returned by AI:",
+        content
+      );
 
       return res.status(502).json({
-        error: "AI returned invalid JSON",
+        error: "AI returned invalid JSON.",
       });
     }
+    if (!validateStudyContent(parsedContent)) {
+  return res.status(502).json({
+    error: "AI returned invalid study content.",
+  });
+}
 
     // Return the parsed JSON object to the frontend
     res.json(parsedContent);
   } catch (error) {
+    // Handle timeout
+    if (error.name === "AbortError") {
+      return res.status(504).json({
+        error:
+          "The AI took too long to respond. Please try again.",
+      });
+    }
+
     console.error("Server error:", error);
 
     res.status(500).json({
-      error: "Internal server error",
+      error:
+        "Internal server error. Please try again.",
     });
   }
 });
@@ -169,5 +266,7 @@ ${input}`,
 const PORT = 3001;
 
 app.listen(PORT, () => {
-  console.log(`Backend listening on http://localhost:${PORT}`);
+  console.log(
+    `Backend listening on http://localhost:${PORT}`
+  );
 });
