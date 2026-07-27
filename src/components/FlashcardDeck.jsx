@@ -9,7 +9,12 @@ export default function FlashcardDeck({ cards }) {
 
   return (
     <div className="flashcard-deck">
-      <Flashcard card={cards[index]} index={index} total={cards.length} />
+      <Flashcard
+  key={cards[index].id}
+  card={cards[index]}
+  index={index}
+  total={cards.length}
+/>
       <div className="deck-nav">
         <button onClick={prev} disabled={index === 0}>← Prev</button>
         <button onClick={next} disabled={index === cards.length - 1}>Next →</button>

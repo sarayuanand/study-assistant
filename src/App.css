@@ -1,72 +1,141 @@
-/* ---------- Global / App container ---------- */
+/* ---------- Global ---------- */
 
-* {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
+}
+
+html {
+  font-size: 16px;
 }
 
 body {
   margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  background: linear-gradient(135deg, #eef2ff, #f6f9ff, #fff7ec);
+  color: #222;
 }
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+button,
+textarea,
+input {
+  font: inherit;
+}
+
+/* ---------- App ---------- */
 
 .app {
-  max-width: 600px;
-  margin: 0 auto;
-  padding: 1.5rem 1rem;
-}
-
-@media (min-width: 900px) {
-  .app {
-    max-width: 700px;
-  }
+  width: min(95%, 900px);
+  margin: 30px auto;
+  padding: 30px;
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 15px 40px rgba(0,0,0,.08);
 }
 
 .app h1 {
-  font-size: 1.5rem;
   text-align: center;
-  margin-bottom: 1.5rem;
+  margin-bottom: 30px;
+  font-size: 2.3rem;
+  color: #355CDE;
 }
 
+/* ---------- Input Form ---------- */
+
+.input-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.input-form textarea {
+  width: 100%;
+  resize: vertical;
+  min-height: 170px;
+  padding: 15px;
+  border-radius: 12px;
+  border: 2px solid #d8def8;
+  transition: .25s;
+}
+
+.input-form textarea:focus {
+  outline: none;
+  border-color: #5B7FFF;
+  box-shadow: 0 0 12px rgba(91,127,255,.25);
+}
+
+.mode-toggle {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.input-form button {
+  padding: 12px;
+  border: none;
+  border-radius: 10px;
+  background: linear-gradient(135deg,#5B7FFF,#355CDE);
+  color: white;
+  cursor: pointer;
+  min-height: 44px;
+  transition: .25s;
+}
+
+.input-form button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 18px rgba(53,92,222,.25);
+}
+
+.input-form button:disabled {
+  background: gray;
+  cursor: default;
+}
+
+/* ---------- Error ---------- */
+
 .error-box {
-  max-width: 500px;
-  margin: 1.5rem auto;
-  padding: 1rem;
-  border-radius: 8px;
-  background: #ffebee;
-  border: 1px solid #c62828;
+  background: #ffe5e5;
+  border: 1px solid #ff6b6b;
+  padding: 18px;
+  margin-top: 20px;
+  border-radius: 12px;
   text-align: center;
 }
 
 .error-box button {
-  min-height: 44px;
-  min-width: 100px;
-  padding: 0.6rem 1.2rem;
-  margin-top: 0.75rem;
-  font-size: 1rem;
-  border-radius: 8px;
+  margin-top: 10px;
+  padding: 10px 20px;
   border: none;
-  background: #c62828;
+  border-radius: 10px;
+  background: linear-gradient(135deg,#ff7b7b,#e63946);
   color: white;
   cursor: pointer;
 }
 
-/* ---------- Flashcard ---------- */
+/* ---------- Flashcards ---------- */
 
 .flashcard-wrapper {
   perspective: 1000px;
-  max-width: 500px;
-  width: 100%;
-  margin: 2rem auto;
+  max-width: 650px;
+  margin: 30px auto;
   text-align: center;
-  padding: 0 1rem;
 }
 
 .flashcard {
   position: relative;
   width: 100%;
-  min-height: 200px;
-  cursor: pointer;
+  min-height: 320px;
   transform-style: preserve-3d;
-  transition: transform 0.5s;
+  transition: transform .5s;
+  cursor: pointer;
+  border-radius: 15px;
+  box-shadow: 0 15px 30px rgba(0,0,0,.12);
 }
 
 .flashcard.flipped {
@@ -76,271 +145,282 @@ body {
 .flashcard-face {
   position: absolute;
   inset: 0;
+
   display: flex;
-  flex-direction: column;
   justify-content: center;
-  align-items: stretch;
-  text-align: center;
-  padding: 1.5rem;
-  border-radius: 12px;
+  align-items: center;
+
+  padding: 30px;
+
+  border-radius: 15px;
+
   backface-visibility: hidden;
-  font-size: 1.1rem;
-  line-height: 1.4;
-  min-height: 200px;
-  max-height: 350px;
+
   overflow-y: auto;
   overflow-wrap: break-word;
-  word-break: normal;
-}
+  word-break: break-word;
 
-/* Scale the card up on larger screens instead of leaving it phone-sized */
-@media (min-width: 640px) {
-  .flashcard-wrapper {
-    max-width: 560px;
-  }
-
-  .flashcard {
-    min-height: 300px;
-  }
-
-  .flashcard-face {
-    min-height: 300px;
-    max-height: 450px;
-    font-size: 1.3rem;
-    padding: 2rem;
-  }
-}
-
-@media (min-width: 900px) {
-  .flashcard-wrapper {
-    max-width: 640px;
-  }
-
-  .flashcard {
-    min-height: 340px;
-  }
-
-  .flashcard-face {
-    min-height: 340px;
-    max-height: 500px;
-    font-size: 1.4rem;
-    padding: 2.5rem;
-  }
-}
-
-.face-text {
-  width: 100%;
+  font-size: 1.2rem;
+  line-height: 1.5;
 }
 
 .flashcard-face.front {
-  background: #f0f0f5;
+  background: linear-gradient(135deg,#ffffff,#eef4ff);
 }
 
 .flashcard-face.back {
-  background: #d8e4ff;
+  background: linear-gradient(135deg,#8EC5FC,#E0C3FC);
+  color: #222;
   transform: rotateY(180deg);
 }
 
 .progress {
-  font-size: 0.9rem;
+  margin-bottom: 10px;
   color: #666;
-  margin-bottom: 0.5rem;
+  font-weight: bold;
 }
 
 .hint {
-  font-size: 0.85rem;
-  color: #999;
-  margin-top: 0.75rem;
+  margin-top: 15px;
+  color: gray;
 }
 
-/* ---------- Flashcard deck nav ---------- */
+/* ---------- Deck ---------- */
 
 .deck-nav {
+  margin-top: 20px;
   display: flex;
   justify-content: center;
-  gap: 1rem;
-  margin-top: 1.25rem;
+  gap: 15px;
   flex-wrap: wrap;
 }
 
 .deck-nav button {
+  min-width: 120px;
   min-height: 44px;
-  min-width: 100px;
-  padding: 0.6rem 1.2rem;
-  font-size: 1rem;
-  border-radius: 8px;
+  padding: 12px 18px;
   border: none;
-  background: #4a6ee0;
+  border-radius: 10px;
   color: white;
+  background: linear-gradient(135deg,#5B7FFF,#355CDE);
   cursor: pointer;
-  -webkit-tap-highlight-color: transparent;
+  transition: .25s;
+}
+
+.deck-nav button:hover:not(:disabled) {
+  transform: translateY(-2px);
 }
 
 .deck-nav button:disabled {
-  background: #ccc;
-  cursor: default;
+  background: gray;
 }
 
 /* ---------- Quiz ---------- */
 
 .quiz {
   width: 100%;
-  max-width: 600px;
-  margin: 1.5rem auto;
-  padding: 0 0.5rem;
 }
 
 .quiz-question {
-  margin-bottom: 1.75rem;
+  background: white;
+  padding: 20px;
+  border-radius: 15px;
+  margin-bottom: 25px;
+  box-shadow: 0 8px 18px rgba(0,0,0,.08);
 }
 
 .question-text {
-  font-size: 1.05rem;
-  font-weight: 600;
-  margin-bottom: 0.75rem;
-  line-height: 1.4;
-  overflow-wrap: break-word;
+  font-weight: bold;
+  margin-bottom: 12px;
+  font-size: 1.1rem;
 }
 
 .options {
-  display: flex;
-  flex-direction: column;
-  gap: 0.6rem;
+  display: grid;
+  gap: 10px;
 }
 
 .option {
-  display: block;
   width: 100%;
   text-align: left;
-  padding: 0.85rem 1rem;
+  padding: 14px;
+  border-radius: 10px;
   border: 2px solid #ddd;
-  border-radius: 8px;
-  background: #fff;
   cursor: pointer;
-  font-size: 1rem;
-  line-height: 1.4;
-  min-height: 44px;
-  transition: all 0.15s ease;
-  overflow-wrap: break-word;
-  -webkit-tap-highlight-color: transparent;
+  transition: .2s;
+  word-break: break-word;
+  background: white;
 }
 
 .option:hover:not(:disabled) {
-  border-color: #b8c8f0;
+  border-color: royalblue;
 }
 
 .option.selected {
-  border-color: #4a6ee0;
-  background: #eaf0ff;
+  background: #dce9ff;
+  border-color: royalblue;
+  font-weight: bold;
 }
 
 .option.correct {
-  border-color: #2e7d32;
-  background: #e8f5e9;
+  background: #d8ffd8;
+  border-color: #2e8b57;
+  font-weight: bold;
 }
 
 .option.incorrect {
-  border-color: #c62828;
-  background: #ffebee;
+  background: #ffe2e2;
+  border-color: #d93025;
 }
 
 .option.reveal-correct {
-  border-color: #2e7d32;
-  background: #e8f5e9;
-  opacity: 0.7;
-}
-
-.option:disabled {
-  cursor: default;
+  background: #d8ffd8;
+  border-color: #2e8b57;
+  opacity: .8;
 }
 
 .explanation {
-  margin-top: 0.6rem;
-  padding: 0.75rem;
-  background: #f7f7fa;
-  border-radius: 8px;
-  font-size: 0.9rem;
-  line-height: 1.4;
-  color: #444;
-  overflow-wrap: break-word;
+  margin-top: 12px;
+  padding: 15px;
+  border-radius: 10px;
+  background: #f5f7ff;
+  border-left: 5px solid royalblue;
 }
 
 .submit-btn {
-  display: block;
   width: 100%;
+  margin-top: 25px;
+  padding: 14px;
   min-height: 48px;
-  padding: 0.75rem 1rem;
-  margin-top: 1rem;
-  font-size: 1.05rem;
-  border-radius: 8px;
   border: none;
-  background: #4a6ee0;
+  border-radius: 10px;
+  background: linear-gradient(135deg,#5B7FFF,#355CDE);
   color: white;
   cursor: pointer;
-  -webkit-tap-highlight-color: transparent;
 }
 
 .submit-btn:disabled {
-  background: #ccc;
-  cursor: default;
+  background: gray;
 }
 
 .quiz-results {
   text-align: center;
-  margin-top: 1.5rem;
-  padding: 1rem;
-  background: #f7f7fa;
-  border-radius: 8px;
-}
-
-.quiz-results p {
-  font-size: 1.15rem;
-  font-weight: 600;
-  margin-bottom: 0.75rem;
+  margin-top: 30px;
+  padding: 25px;
+  border-radius: 15px;
+  background: linear-gradient(135deg,#eef4ff,#ffffff);
+  box-shadow: 0 8px 18px rgba(0,0,0,.08);
 }
 
 .quiz-results button {
-  min-height: 44px;
-  padding: 0.6rem 1.2rem;
-  font-size: 1rem;
-  border-radius: 8px;
+  margin-top: 15px;
+  padding: 12px 20px;
   border: none;
-  background: #4a6ee0;
+  border-radius: 10px;
+  background: linear-gradient(135deg,#5B7FFF,#355CDE);
   color: white;
   cursor: pointer;
 }
 
-/* ---------- Larger screens: let quiz options sit side by side ---------- */
+/* ---------- Tablet ---------- */
 
-@media (min-width: 640px) {
-  .options {
-    flex-direction: row;
-    flex-wrap: wrap;
-  }
+@media (min-width:768px){
 
-  .option {
-    flex: 1 1 calc(50% - 0.6rem);
-  }
+.options{
+grid-template-columns:repeat(2,1fr);
 }
 
-/* ---------- Small phones: tighten spacing ---------- */
+.flashcard{
+min-height:360px;
+}
 
-@media (max-width: 400px) {
-  .app {
-    padding: 1rem 0.75rem;
-  }
+.flashcard-face{
+font-size:1.35rem;
+}
 
-  .flashcard-wrapper {
-    padding: 0 0.5rem;
-    margin: 1.25rem auto;
-  }
+}
 
-  .flashcard-face {
-    padding: 1rem;
-    font-size: 1rem;
-  }
+/* ---------- Desktop ---------- */
 
-  .quiz {
-    padding: 0;
-  }
+@media (min-width:1100px){
+
+.app{
+width:min(90%,1000px);
+}
+
+.flashcard{
+min-height:420px;
+}
+
+.flashcard-face{
+font-size:1.5rem;
+padding:40px;
+}
+
+.quiz{
+max-width:850px;
+margin:auto;
+}
+
+}
+
+/* ---------- Phones ---------- */
+
+@media (max-width:600px){
+
+.app{
+padding:15px;
+}
+
+.app h1{
+font-size:1.8rem;
+}
+
+.mode-toggle{
+flex-direction:column;
+gap:10px;
+}
+
+.flashcard{
+min-height:260px;
+}
+
+.flashcard-face{
+min-height:260px;
+font-size:1rem;
+padding:18px;
+}
+
+.deck-nav{
+flex-direction:column;
+align-items:stretch;
+}
+
+.deck-nav button{
+width:100%;
+}
+
+}
+
+/* ---------- Very Small Phones ---------- */
+
+@media (max-width:380px){
+
+html{
+font-size:15px;
+}
+
+.flashcard{
+min-height:220px;
+}
+
+.flashcard-face{
+min-height:220px;
+padding:14px;
+}
+
+.input-form textarea{
+min-height:140px;
+}
+
 }
