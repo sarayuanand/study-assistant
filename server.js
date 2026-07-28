@@ -6,7 +6,11 @@ dotenv.config();
 
 const app = express();
 
-app.use(cors());
+app.use(cors({
+  origin: process.env.NODE_ENV === "production"
+    ? "https://study-assistant-rose-nu.vercel.app/"
+    : "http://localhost:5173",
+}));
 app.use(express.json());
 
 const SYSTEM_PROMPT = `
