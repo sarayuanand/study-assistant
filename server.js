@@ -50,7 +50,7 @@ For quizzes, return exactly this shape:
         "string"
       ],
       "correctIndex": 0,
-      "explanation": "string"
+      "explanation": "A 1-2 sentence explanation of WHY the correct answer is right, teaching the underlying concept. Do not simply restate the answer — explain the reasoning or fact that makes it correct."
     }
   ]
 }
@@ -66,6 +66,7 @@ Rules:
 - Do not return markdown.
 - Do not use code fences.
 - Do not include any text before or after the JSON.
+- Explanations must teach the reasoning behind the correct answer, not just restate it. For example, avoid "The answer is X" — instead explain what makes X correct (e.g. "Chloroplasts contain chlorophyll, the pigment that captures light energy for photosynthesis").
 `;
 
 function validateStudyContent(data) {
