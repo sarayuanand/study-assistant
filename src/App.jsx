@@ -97,13 +97,12 @@ function App() {
     setErrorMsg("");
 
     try {
-      const res = await fetch("http://localhost:3001/api/generate", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ input, mode }),
-        signal: controller.signal,
-      });
-
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/generate`, {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ input, mode }),
+  signal: controller.signal,
+});
       if (abortControllerRef.current !== controller) return;
 
       if (!res.ok) {
