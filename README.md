@@ -180,7 +180,7 @@ All AI-suggested code was reviewed, tested, and adapted by hand. Debugging real 
 
 ## Time Spent
 
-Approximately **11 hours** in total.
+Approximately **12 hours** in total.
 
 | Task | Time |
 |------|------|
